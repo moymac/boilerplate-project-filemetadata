@@ -1,8 +1,9 @@
 // Solving
 var express = require('express');
 var cors = require('cors');
+var multer = require('multer');
 require('dotenv').config()
-
+const upload = multer()
 var app = express();
 
 app.use(cors());
@@ -13,6 +14,21 @@ app.get('/', function (req, res) {
 });
 
 
+app.post('/api/fileanalyse', upload.single('upfile'), function (req, res) {
+
+  const file = req.file;
+  if (!file) {
+    const error = new Error('Please upload a file')
+    error.httpStatusCode = 400
+    return next(error)
+  }
+  const result = {
+    "name": file.originalname,
+    "type": file.mimetype,
+    "size": file.size
+  }
+  res.json(result);
+});
 
 
 const port = process.env.PORT || 3000;
